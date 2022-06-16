@@ -40,7 +40,7 @@ def parse_required_fields(data) -> list[dict]:
 
 
 def write_to_csv_file() -> None:
-    jobs = parse_required_fields(get_access_and_data())
+    jobs = parse_required_fields(get_data())
     with open(CSV_FILE, 'a', encoding="utf-8") as f:
         field_names = ['Index', 'Title', 'Company_Name',
                        'Country_or_City', 'Advertisement_link', 'Salary']
