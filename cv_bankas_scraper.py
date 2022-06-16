@@ -1,21 +1,22 @@
+import numpy as np
 from bs4 import BeautifulSoup
 import requests
 import csv
 
 CSV_FILE = "CV_BANKAS.csv"
-URLS = ['https://www.cvbankas.lt/?keyw=Python',
-        'https://www.cvbankas.lt/?keyw=Python&page=2']  # pakeisk
+pages = np.arange(1, 3, 1)
 
 
-def get_access_and_data() -> list[str]:
+def get_data() -> list[str]:
     texts = []
-    for url in URLS:
-        text = requests.get(url).text
+    for page in pages:
+        page = 'https://www.cvbankas.lt/?keyw=Python&page=' + str(page)
+        text = requests.get(page).text
         texts.append(text)
     return texts
 
 
-def parse_required_fields(data) -> list[dict]:  # atskirti field parsinga nuo info set'o
+def parse_required_fields(data) -> list[dict]:
     result = []
     data = str(data)
     soup = BeautifulSoup(data, 'lxml')
@@ -26,8 +27,8 @@ def parse_required_fields(data) -> list[dict]:  # atskirti field parsinga nuo in
             'title': job.find('h3', class_='list_h3').text.replace('\\n', '').replace(' ', ''),
             'company_name': job.find('span', class_='dib mt5').text.replace('\\n', '').replace(' ', ''),
             'city_or_country': job.find('span', class_='list_city').text.replace('\\n', '').replace(' ', ''),
-            'advertisement_link': job.find('a', class_='list_a can_visited list_a_has_logo')\
-            .attrs['href'].replace('\\n', '')}
+            'advertisement_link': job.find('a', class_='list_a can_visited list_a_has_logo') \
+                .attrs['href'].replace('\\n', '')}
         try:
             job_item['salary'] = job.find('span', class_='salary_amount').text.replace('\\n', '').replace(' ', '')
         except AttributeError:
@@ -58,4 +59,4 @@ def write_to_csv_file() -> None:
             list_index += 1
 
 
-get_access_and_data()
+write_to_csv_file()
