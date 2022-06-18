@@ -3,11 +3,8 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import sqlite3
-import sqlalchemy
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-CSV_FILE = "CV_BANKAS.csv"
+
 pages = np.arange(1, 3, 1)
 
 
@@ -54,5 +51,4 @@ def write_to_sql() -> None:
     c.execute('''
     SELECT * FROM jobs
     ''')
-    for row in c.fetchall():
-        print(row)
+
