@@ -20,10 +20,10 @@ def get_data() -> list[str]:
     return texts
 
 
-def parse_required_fields(data) -> list[dict]:
+def parse_required_fields(texts) -> list[dict]:
     result = []
-    data = str(data)
-    soup = BeautifulSoup(data, 'lxml')
+    texts = str(texts)
+    soup = BeautifulSoup(texts, 'lxml')
     jobs = soup.find_all('article', class_='list_article list_article_rememberable jobadlist_list_article_rememberable')
     for index, job in enumerate(jobs, 1):
         job_item = {

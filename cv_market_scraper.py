@@ -2,31 +2,32 @@ from bs4 import BeautifulSoup
 import requests
 import csv
 
-
 CSV_FILE = 'job_data.csv'
 CVMARKET_URL = 'https://www.cvmarket.lt'
-URL = ['https://www.cvmarket.lt/joboffers.php?_track=index_click_job_search&op=search&search_location=landingpage'
-       '&ga_track=homepage&search%5Bkeyword%5D=python&search%5Bexpires_days%5D=&search%5Bjob_lang%5D=&search%5Bsalary'
-       '%5D=&search%5Bjob_salary%5D=3&mobile_search%5Bkeyword%5D=&tmp_city=&tmp_cat=&tmp_category=',
 
-       'https://www.cvmarket.lt/joboffers.php?_track=index_click_job_search&op=search&search_location=landingpage'
-       '&ga_track=homepage&search%5Bkeyword%5D=python&search%5Bexpires_days%5D=&search%5Bjob_lang%5D=&search%5Bsalary'
-       '%5D=&search%5Bjob_salary%5D=3&mobile_search%5Bkeyword%5D=&tmp_city=&tmp_cat=&tmp_category=&start=30']
+pages = ['', 30]
 
 time_limit = 'prieš 1 mėn.'
 
 
-def get_access_and_data():
-    data = []
-    for url in range(0, 2):
-        req = requests.get(URL[url]).text
-        data.append(req)
-    return str(data)
+def get_data():
+    texts = []
+    for page in pages:
+        page = 'https://www.cvmarket.lt/joboffers.' \
+               'php?_track=index_click_job_search&op=search&search_location=landingpage' \
+               '&ga_track=homepage&search%5Bkeyword%5D=python&search%5Bexpires_' \
+               'days%5D=&search%5Bjob_lang%5D=&search%5Bsalary' \
+               '%5D=&search%5Bjob_salary%5D=3&mobile_search%5Bkeyword%5D' \
+               '=&tmp_city=&tmp_cat=&tmp_category=&start=' + str(page)
+        text = requests.get(page).text
+        texts.append(text)
+    return texts
 
 
-def parse_required_fields(req):
+def parse_required_fields(texts):
     results = []
-    soup = BeautifulSoup(req, 'lxml')
+    texts = str(texts)
+    soup = BeautifulSoup(texts, 'lxml')
     jobs = soup.find_all('tr', class_='f_job_row2')
     for index, job in enumerate(jobs, 1):
         job_item = {}
@@ -54,7 +55,7 @@ def parse_required_fields(req):
 
 
 def write_to_csv_file() -> None:
-    jobs = get_access_and_data()
+    jobs = get_data()
     with open(CSV_FILE, 'a', encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(['Index', 'Title', 'Company_Name',
@@ -69,3 +70,4 @@ def write_to_csv_file() -> None:
                  job['salary']])
 
 
+write_to_csv_file()
